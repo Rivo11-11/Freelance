@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import morgan from "morgan";
 import userRouter from "./routers/userRouter";
 
 dotenv.config();
@@ -10,11 +11,8 @@ const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI ;
 
 app.use(express.json());
+app.use(morgan('dev'))
 app.use("/api/v1/users", userRouter);
-
-app.get("/api/v1/", (_req, res) => {
-  res.send("Hello from Node.js + TypeScript backend!");
-});
 
 mongoose.connect(MONGO_URI!)
   .then(() => {
