@@ -1,18 +1,21 @@
 import express from "express";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import morgan from "morgan";
-import userRouter from "./routers/userRouter";
+import mongoose from "mongoose";
+import userRouter from "./routers/UserRouter";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI ;
+const MONGO_URI = process.env.MONGO_URI;
 
+// Middleware
 app.use(express.json());
-app.use(morgan('dev'))
-app.use("/api/v1/users", userRouter);
+app.use(morgan('dev'));
+
+// Routes
+app.use("/api/v1/users", userRouter); 
 
 mongoose.connect(MONGO_URI!)
   .then(() => {
