@@ -1,0 +1,18 @@
+# dependencies
+node_modules/
+
+# production
+dist/
+
+# dotenv environment variables
+.env
+
+# logs
+*.log
+
+# OS files
+.DS_Store
+
+# Editor swap files
+*.swp
+*.swo
