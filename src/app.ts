@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import mongoose from "mongoose";
 import userRouter from "./routers/UserRouter";
-
+import authRouter from "./routers/AuthRouter";
 dotenv.config();
 
 const app = express();
@@ -16,6 +16,8 @@ app.use(morgan('dev'));
 
 // Routes
 app.use("/api/v1/users", userRouter); 
+app.use("/api/v1/auth", authRouter);
+
 
 mongoose.connect(MONGO_URI!)
   .then(() => {
