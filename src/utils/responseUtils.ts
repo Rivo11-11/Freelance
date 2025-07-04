@@ -27,6 +27,10 @@ export default class ResponseUtils {
     return this.error(res, 422, error);
   }
 
+  static badRequest(res: Response, error?: any): Response {
+    return this.error(res, 400, error);
+  }
+
   static unauthorized(res: Response, error?: any): Response {
     return this.error(res, 401, error);
   }
