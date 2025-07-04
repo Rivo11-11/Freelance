@@ -1,7 +1,7 @@
 import { body } from "express-validator";
 import { validateRequest } from "../middleware/validateRequest";
 import { SignupMethod } from "../utils/enumHelper";
-import User from "../models/UserModel";
+import User, { UserRole } from "../models/UserModel";
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -49,6 +49,8 @@ export const signupValidator = [
       }
       return true;
     }),
+    body('role').notEmpty().withMessage('role is required')
+    .isIn(Object.values(UserRole)).withMessage('invalid role'),
     body('password').notEmpty().withMessage('password is required')
     .isLength({ min: 6 }).withMessage('password must be at least 6 characters'),
     body('profilePicture')

@@ -23,7 +23,7 @@ const UserSchema: Schema = new Schema({
   phone: { type: String, required: true, unique: true },
   password: { type: String, required: true }, 
   profilePicture: { type: String, required: false },
-  role: { type: String, enum: Object.values(UserRole) },
+  role: { type: String, required: true, enum: Object.values(UserRole) },
 });
 
 UserSchema.virtual('fullName').get(function() {
