@@ -23,8 +23,8 @@ export default class AuthController {
 
     async completeSignup(req: Request, res: Response) {
         const signupDTO: SignupDTO = req.body; 
-        // const result = await AuthService.signup(signupDTO);
-        // return ResponseUtils.success(res, result);
+        const result = await AuthService.signup(signupDTO);
+        return ResponseUtils.success(res, result);
 
     };
 
