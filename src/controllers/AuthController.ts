@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import AuthService from '../services/AuthService';
 import ResponseUtils from '../utils/responseUtils';
 import { SignupMethod } from '../utils/enumHelper';
+import { SignupDTO } from '../DTO/signup';
 
 export default class AuthController {
 
@@ -21,8 +22,9 @@ export default class AuthController {
     };
 
     async completeSignup(req: Request, res: Response) {
-        const { name, email, phone, password, profileImage } = req.body;
-        // const token = await authService.completeSignup({ name, email, phone, password, profileImage });
+        const signupDTO: SignupDTO = req.body; 
+        const result = await AuthService.signup(signupDTO);
+        return ResponseUtils.success(res, result);
 
     };
 

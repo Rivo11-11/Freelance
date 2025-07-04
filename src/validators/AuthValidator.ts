@@ -20,3 +20,30 @@ export const initiateSignupValidator = [
     }),
     validateRequest
 ];
+
+export const signupValidator = [
+    body('firstName').notEmpty().withMessage('firstName is required'),
+    body('lastName').notEmpty().withMessage('lastName is required'),
+    body('email').notEmpty().withMessage('email is required')
+    .isEmail().withMessage('invalid email')
+    .custom(async (value, { req }) => {
+      const email = req.body.email;
+      const filter = { email };
+      const existingUser = await User.findOne(filter);
+      if (existingUser) {
+        throw new Error(`email already registered`);
+      }
+      return true;
+    }),
+    body('phone').notEmpty().withMessage('phone is required')
+    .custom(async (value, { req }) => {
+      const phone = req.body.phone;
+      const filter = { phone };
+      const existingUser = await User.findOne(filter);
+      if (existingUser) {
+        throw new Error(`phone already registered`);
+      }
+      return true;
+    }),
+    validateRequest
+];

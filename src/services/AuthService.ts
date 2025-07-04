@@ -2,6 +2,9 @@ import OTPService from '../helper/OTPService';
 import NotificationService from '../helper/NotificationService';
 import User from '../models/UserModel';
 import { SignupMethod } from '../utils/enumHelper';
+import { SignupDTO } from '../DTO/signup';
+import { generateToken } from '../utils/jwt';
+import { comparePassword, hashPassword } from '../utils/hash';
 
 class AuthService {
 
@@ -25,14 +28,24 @@ class AuthService {
        
    };
    
-   async completeSignup(name: string, email: string, phone: string, password: string, profileImage: string) {
-       // const token = await authService.completeSignup({ name, email, phone, password, profileImage });
-       
+   async signup(signupDTO: SignupDTO) {
+      const password = await hashPassword(signupDTO.password);
+      const user = await User.create({...signupDTO, password}); 
+      const token =  generateToken({ userId: user._id});
+      return {
+        token
+      };
    };
    
    async signin(method: string, value: string, password: string) {
-       // const token = await authService.signin(method, value, password);
-       
+       const user = await User.findOne({[method]: value});
+       if(!user) {
+        throw new Error('user not found');
+       }
+       const isPasswordValid = await comparePassword(password, user.password);
+       if(!isPasswordValid) {
+        throw new Error('invalid password');
+       }
    };
    
 }
