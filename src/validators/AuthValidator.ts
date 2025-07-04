@@ -68,3 +68,10 @@ export const signupValidator = [
     }),
     validateRequest
 ];
+
+export const signinValidator = [
+    body('email').notEmpty().withMessage('email is required')
+    .isEmail().withMessage('invalid email'),
+    body('password').notEmpty().withMessage('password is required')
+    .isLength({ min: 6 }).withMessage('password must be at least 6 characters'),
+];
