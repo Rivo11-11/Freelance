@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { uploadToCloudinary } from '../utils/cloudinaryUtils';
 
 export enum UserRole {
   VENDOR = 'vendor',  
@@ -27,6 +28,16 @@ const UserSchema: Schema = new Schema({
 
 UserSchema.virtual('fullName').get(function() {
   return `${this.firstName} ${this.lastName}`;
+});
+
+
+UserSchema.pre('save', async function(next) {
+  if (!this.isModified('profilePicture')) {
+    return next();
+  }
+  const result = await uploadToCloudinary(this.profilePicture, 'user-profiles');
+  this.profilePicture = result.secure_url;
+  next();
 });
 
 export default mongoose.model<IUser>('User', UserSchema); 

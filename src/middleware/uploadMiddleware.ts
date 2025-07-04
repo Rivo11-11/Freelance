@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { uploadToCloudinary } from '../utils/cloudinaryUtils';
 import  upload  from '../config/multer';
 
 
@@ -13,9 +12,7 @@ export const uploadImageMiddleware = (fieldName: string) => {
         }
         const b64 = Buffer.from(req.file!.buffer).toString('base64');
         const dataURI = `data:${req.file!.mimetype};base64,${b64}`;
-        
-        const result = await uploadToCloudinary(dataURI, 'user-profiles');
-        req.body.imageUrl = result.secure_url;
+        req.body[fieldName] = dataURI;
         next();
        
     }
