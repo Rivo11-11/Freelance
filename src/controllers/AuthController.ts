@@ -6,6 +6,7 @@ import AuthService from '../services/AuthService';
 import ResponseUtils from '../utils/responseUtils';
 import { SignupMethod } from '../utils/enumHelper';
 import { SignupDTO } from '../DTO/signup';
+import { SigninDTO } from '../DTO/signin';
 
 export default class AuthController {
 
@@ -29,8 +30,9 @@ export default class AuthController {
     };
 
     async signin(req: Request, res: Response) {
-        const { method, value, password } = req.body;
-        // const token = await authService.signin(method, value, password);
+        const signinDTO: SigninDTO = req.body;
+        const result = await AuthService.signin(signinDTO);
+        return ResponseUtils.success(res, result);
 
     };
 

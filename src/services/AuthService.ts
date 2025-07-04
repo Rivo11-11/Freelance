@@ -5,6 +5,8 @@ import { SignupMethod } from '../utils/enumHelper';
 import { SignupDTO } from '../DTO/signup';
 import { generateToken } from '../utils/jwt';
 import { comparePassword, hashPassword } from '../utils/hash';
+import { SigninDTO } from '../DTO/signin';
+import CustomError from '../utils/errorUtils';
 
 class AuthService {
 
@@ -38,14 +40,19 @@ class AuthService {
       };
    };
    
-   async signin(method: string, value: string, password: string) {
-       const user = await User.findOne({[method]: value});
+   async signin(signinDTO: SigninDTO) {
+       const user = await User.findOne({email: signinDTO.email});
        if(!user) {
-        throw new Error('user not found');
+        throw new CustomError('email or password is incorrect', 442);
        }
-       const isPasswordValid = await comparePassword(password, user.password);
+       const isPasswordValid = await comparePassword(signinDTO.password, user.password);
        if(!isPasswordValid) {
-        throw new Error('invalid password');
+        throw new CustomError('email or password is incorrect', 442);
+       }
+       const token =  generateToken({ userId: user._id});
+       return {
+        token,
+        user
        }
    };
    
