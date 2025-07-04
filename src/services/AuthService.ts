@@ -32,10 +32,6 @@ class AuthService {
    
    async signup(signupDTO: SignupDTO) {
       const password = await hashPassword(signupDTO.password);
-      const users = await User.find({email: signupDTO.email});
-      if(users.length > 0) {
-        throw new CustomError('email already exists', 442);
-      }
       const user = await User.create({...signupDTO, password});
       const { token, expiresIn } =  generateToken({ userId: user._id});
       return {
