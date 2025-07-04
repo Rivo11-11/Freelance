@@ -1,38 +1,16 @@
-import multer from 'multer';
 import { Request, Response, NextFunction } from 'express';
 import { uploadToCloudinary } from '../utils/cloudinaryUtils';
-import CustomError from '../utils/errorUtils';
+import  upload  from '../config/multer';
 
-const storage = multer.memoryStorage();
 
-const upload = multer({
-  storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024
-  }
-});
-
-const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
-const MAX_SIZE = 5 * 1024 * 1024;
-
-const validateImage = (file: Express.Multer.File | undefined) => {
-  if (file && !ALLOWED_TYPES.includes(file.mimetype)) {
-    throw new CustomError('Only JPG, JPEG, and PNG images are allowed', 400);
-  }
-  if (file && file.size > MAX_SIZE) {
-    throw new CustomError('Image size must be less than 5MB', 400);
-  }
-};
 
 export const uploadImageMiddleware = (fieldName: string) => {
   return [
-    upload.single(fieldName),
+    upload.single(fieldName) ,
     async (req: Request, res: Response, next: NextFunction) => {
         if (!req.file) {
           return next()
         }
-       validateImage(req.file);
-
         const b64 = Buffer.from(req.file!.buffer).toString('base64');
         const dataURI = `data:${req.file!.mimetype};base64,${b64}`;
         

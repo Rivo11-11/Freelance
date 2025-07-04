@@ -2,6 +2,10 @@ import { body } from "express-validator";
 import { validateRequest } from "../middleware/validateRequest";
 import { SignupMethod } from "../utils/enumHelper";
 import User from "../models/UserModel";
+
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 export const initiateSignupValidator = [
     body('method').notEmpty().withMessage('method is required')
     .isIn(Object.values(SignupMethod)).withMessage('invalid method'),
@@ -43,6 +47,21 @@ export const signupValidator = [
       if (existingUser) {
         throw new Error(`phone already registered`);
       }
+      return true;
+    }),
+    body('password').notEmpty().withMessage('password is required')
+    .isLength({ min: 6 }).withMessage('password must be at least 6 characters'),
+    body('profilePicture')
+    .custom((value, { req }) => {
+      const file = req.file;      
+      if (!ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
+        throw new Error('Only JPG, JPEG, and PNG images are allowed');
+      }
+      
+      if (file.size > MAX_FILE_SIZE) {
+        throw new Error('Image size must be less than 5MB');
+      }
+      
       return true;
     }),
     validateRequest
