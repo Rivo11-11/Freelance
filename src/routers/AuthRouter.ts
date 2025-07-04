@@ -9,7 +9,7 @@ const authController = new AuthController();
 
 router.post('/signup/initiate', initiateSignupValidator, authController.initiateSignup);
 router.post('/signup/verify', authController.verifySignup);
-router.post('/signup',signupValidator , uploadImageMiddleware('profilePicture'), authController.completeSignup);
+router.post('/signup',uploadImageMiddleware('profilePicture'), signupValidator, authController.completeSignup);
 router.post('/signin', authController.signin);
 
 export default router;

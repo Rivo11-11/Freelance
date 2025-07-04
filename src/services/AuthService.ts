@@ -33,7 +33,8 @@ class AuthService {
       const user = await User.create({...signupDTO, password}); 
       const token =  generateToken({ userId: user._id});
       return {
-        token
+        token,
+        user
       };
    };
    

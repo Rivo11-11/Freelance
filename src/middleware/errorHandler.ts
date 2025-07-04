@@ -7,5 +7,10 @@ export const globalErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  return ResponseUtils.error(res, error.code, error.message);
+  switch (error.name) {
+    case "MulterError":
+      return ResponseUtils.unprocessableEntity(res, error.name);
+    default:
+      return ResponseUtils.error(res, error.code, error.message);
+  }
 }; 
