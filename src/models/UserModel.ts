@@ -14,6 +14,8 @@ export interface IUser extends Document {
   password: string;
   profilePicture: string;
   role: UserRole;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const UserSchema: Schema = new Schema({
@@ -24,6 +26,8 @@ const UserSchema: Schema = new Schema({
   password: { type: String, required: true }, 
   profilePicture: { type: String, required: false },
   role: { type: String, required: true, enum: Object.values(UserRole) },
+}, {
+  timestamps: true
 });
 
 UserSchema.virtual('fullName').get(function() {
