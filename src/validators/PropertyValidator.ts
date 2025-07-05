@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { validateRequest } from "../middleware/validateRequest";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 
@@ -17,7 +18,8 @@ export const createPropertyValidator = [
     body('maxDays').notEmpty().withMessage('Max days is required'),
     body('ownershipContract').notEmpty().withMessage('Ownership contract is required').
     custom((value, { req }) => {
-        const file = req.file;
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+        const file = files?.ownershipContract?.[0];
         if (!file) 
             throw new Error('Ownership contract is required');
         if (!['application/pdf'].includes(file.mimetype)) {
@@ -28,9 +30,10 @@ export const createPropertyValidator = [
         }
         return true;
     }),
-    body('facilityLicense').notEmpty().withMessage('Facility license is required').
+    body('facilityLicense').
     custom((value, { req }) => {
-        const file = req.file;
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+        const file = files?.facilityLicense?.[0];
         if (!file) 
             return true;
         if (!['application/pdf'].includes(file.mimetype)) {
@@ -42,18 +45,20 @@ export const createPropertyValidator = [
         return true;
     }),
     body('medias').notEmpty().withMessage('Medias is required').custom((value, { req }) => {
-        const files = req.files;
-        if (!files || files.length === 0)
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+        const mediaFiles = files?.medias;
+        if (!mediaFiles || mediaFiles.length === 0)
             throw new Error('At least one media is required');
-        if (files.length > 3)
+        if (mediaFiles.length > 3)
             throw new Error('Medias must be less than 3'); 
-        if (!files.every((file: Express.Multer.File) => ['image/jpeg', 'image/jpg', 'image/png', 'video/mp4'].includes(file.mimetype))) {
+        if (!mediaFiles.every((file: Express.Multer.File) => ['image/jpeg', 'image/jpg', 'image/png', 'video/mp4'].includes(file.mimetype))) {
             throw new Error('Only image and video files are allowed');
         }
-        if (files.some((file: Express.Multer.File) => file.size > MAX_FILE_SIZE)) {
+        if (mediaFiles.some((file: Express.Multer.File) => file.size > MAX_FILE_SIZE)) {
             throw new Error('Media size must be less than 10MB per file');
         }
         return true;
     }),
     body('vendor').notEmpty().withMessage('Vendor is required'),
+    validateRequest
 ]
