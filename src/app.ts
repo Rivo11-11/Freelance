@@ -7,6 +7,7 @@ import userRouter from "./routers/UserRouter";
 import authRouter from "./routers/AuthRouter";
 import { globalErrorHandler } from "./middleware/errorHandler";
 import propertyRouter from "./routers/PropertyRouter";
+import { RouteDebugger } from "./utils/routeDebugger";
 dotenv.config();
 
 const app = express();
@@ -28,6 +29,9 @@ mongoose.connect(MONGO_URI!)
   .then(() => {
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
+      
+      // Debug: Log all registered routes
+      // RouteDebugger.logAllRoutes(app);
     });
     console.log("✅ Connected to MongoDB");
   })
