@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { UserController } from "../controllers/UserController";
 import { createUserValidation } from "../validators/UserValidator";
+import { signupValidator } from "../validators/AuthValidator";
 
 const router = Router();
 const userController = new UserController();
@@ -8,7 +9,7 @@ const userController = new UserController();
 // Standard CRUD routes
 router.get("/", userController.getAll.bind(userController));
 router.get("/:id", userController.getById.bind(userController));
-router.post("/", createUserValidation, userController.create.bind(userController));
+router.post("/", signupValidator, userController.create.bind(userController));
 router.put("/:id", userController.update.bind(userController));
 router.delete("/:id", userController.delete.bind(userController));
 

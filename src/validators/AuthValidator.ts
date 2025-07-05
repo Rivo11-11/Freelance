@@ -55,7 +55,9 @@ export const signupValidator = [
     .isLength({ min: 6 }).withMessage('password must be at least 6 characters'),
     body('profilePicture')
     .custom((value, { req }) => {
-      const file = req.file;      
+      const file = req.file;  
+      if (!file) return true;
+
       if (!ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
         throw new Error('Only JPG, JPEG, and PNG images are allowed');
       }
