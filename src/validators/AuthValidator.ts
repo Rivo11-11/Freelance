@@ -4,7 +4,7 @@ import { SignupMethod } from "../utils/enumHelper";
 import User, { UserRole } from "../models/UserModel";
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; 
 
 export const initiateSignupValidator = [
     body('method').notEmpty().withMessage('method is required')
@@ -63,7 +63,7 @@ export const signupValidator = [
       }
       
       if (file.size > MAX_FILE_SIZE) {
-        throw new Error('Image size must be less than 5MB');
+        throw new Error('Image size must be less than 10MB');
       }
       
       return true;
