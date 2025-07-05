@@ -13,7 +13,6 @@ export class PropertyController extends BaseController<IProperty> {
     this.propertyService = propertyService;
   }
 
-  // Property-specific endpoints
   async getAvailableProperties(req: Request, res: Response) {
       const properties = await this.propertyService.getAvailableProperties();
       return ResponseUtils.success(res, properties);

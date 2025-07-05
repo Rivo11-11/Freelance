@@ -1,22 +1,21 @@
 import { Router } from "express";
 import { PropertyController } from "../controllers/PropertyController";
-import { RouterFactory } from "../utils/routerFactory";
 
 const router = Router();
 const propertyController = new PropertyController();
 
-const crudRouter = RouterFactory.createCRUDRoutes(
-  propertyController,
-  'properties',
-  [
-    { method: 'get', path: '/available', handler: 'getAvailableProperties' },
-    { method: 'get', path: '/type/:type', handler: 'getPropertiesByType' },
-    { method: 'get', path: '/vendor/:vendorId', handler: 'getPropertiesByVendor' },
-    { method: 'get', path: '/search', handler: 'searchProperties' },
-    { method: 'get', path: '/price-range', handler: 'getPropertiesByPriceRange' }
-  ]
-);
+// Standard CRUD routes
+router.get("/", propertyController.getAll.bind(propertyController));
+router.get("/:id", propertyController.getById.bind(propertyController));
+router.post("/", propertyController.create.bind(propertyController));
+router.put("/:id", propertyController.update.bind(propertyController));
+router.delete("/:id", propertyController.delete.bind(propertyController));
 
-router.use(crudRouter);
+// Property-specific routes
+router.get("/available", propertyController.getAvailableProperties.bind(propertyController));
+router.get("/type/:type", propertyController.getPropertiesByType.bind(propertyController));
+router.get("/vendor/:vendorId", propertyController.getPropertiesByVendor.bind(propertyController));
+router.get("/search", propertyController.searchProperties.bind(propertyController));
+router.get("/price-range", propertyController.getPropertiesByPriceRange.bind(propertyController));
 
 export default router; 
