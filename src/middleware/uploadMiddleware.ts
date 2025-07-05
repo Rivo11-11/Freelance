@@ -54,7 +54,7 @@ export const uploadImageMiddleware = (fieldName: string) => {
   ];
 };
 
-export const uploadMultiplePdfMiddleware = (fields: { name: string; maxCount?: number }[]) => {
+export const uploadMultipleMediaMiddleware = (fields: { name: string; maxCount?: number }[]) => {
   return [
     upload.fields(fields.map(field => ({ name: field.name, maxCount: field.maxCount || 1 }))),
     async (req: Request, res: Response, next: NextFunction) => {
@@ -67,14 +67,12 @@ export const uploadMultiplePdfMiddleware = (fields: { name: string; maxCount?: n
       for (const [fieldName, fileArray] of Object.entries(files)) {
         if (fileArray && fileArray.length > 0) {
           if (fieldName === 'medias') {
-            // Handle medias as an array of data URIs
             const dataURIs = fileArray.map(file => {
               const b64 = Buffer.from(file.buffer).toString('base64');
               return `data:${file.mimetype};base64,${b64}`;
             });
             req.body[fieldName] = dataURIs;
           } else {
-            // Handle single files (PDFs) as single data URI
             const file = fileArray[0];
             const b64 = Buffer.from(file.buffer).toString('base64');
             const dataURI = `data:${file.mimetype};base64,${b64}`;

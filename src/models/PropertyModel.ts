@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, model } from "mongoose";
 import { PropertyType } from "../utils/enumHelper";
+import { uploadMultipleToCloudinary, uploadToCloudinary } from "../utils/cloudinaryUtils";
 
 
 export interface IProperty extends Document {
@@ -96,4 +97,22 @@ const PropertySchema = new Schema({
     timestamps: true
 })
 
+PropertySchema.pre('save', async function(next) {
+    if (!this.isModified('medias')) {
+        return next();
+    }        
+    const promises = [
+        uploadMultipleToCloudinary(this.medias as string[], 'property/medias'),
+        uploadToCloudinary(this.ownershipContract as string, 'property/ownershipContract'),
+        this.facilityLicense ? uploadToCloudinary(this.facilityLicense as string, 'property/facilityLicense') : null,
+    ]
+    
+    const result = await Promise.all(promises);
+    this.medias = (result[0] as any[]).map((item: any) => item.secure_url);
+    this.ownershipContract = (result[1] as any).secure_url;
+    if (result[2]) {
+        this.facilityLicense = (result[2] as any).secure_url;
+    }
+    next();
+})
 export default mongoose.model<IProperty>('Property', PropertySchema);

@@ -13,6 +13,35 @@ export const uploadToCloudinary = async (dataURI: string,folder:string) => {
     }
 };
 
+export const uploadMultipleToCloudinary = async (dataURIs: string[], folder: string) => {
+    try {
+        const uploadPromises = dataURIs.map(async (dataURI, index) => {
+            try {
+                const mimeType = dataURI.split(';')[0].split(':')[1];
+                let resourceType: 'image' | 'video' = 'image';
+                if (mimeType.startsWith('video/')) {
+                    resourceType = 'video';
+                }
+                
+                const result = await cloudinary.uploader.upload(dataURI, {
+                    folder: folder,
+                    resource_type: resourceType,
+                    public_id: `${folder}_${Date.now()}_${index}` // Ensure unique names
+                });
+                return result;
+            } catch (error) {
+                console.error(`Failed to upload file ${index + 1}:`, error);
+                throw new Error(`Failed to upload file ${index + 1}`);
+            }
+        });
+
+        const results = await Promise.all(uploadPromises);
+        return results;
+    } catch (error) {
+        console.error('Error uploading multiple files to Cloudinary:', error);
+        throw new Error('Failed to upload multiple files to Cloudinary');
+    }
+};
 /**
  * Delete image from Cloudinary
  */
