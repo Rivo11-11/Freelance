@@ -1,15 +1,15 @@
 import { Router } from "express";
 import { PropertyController } from "../controllers/PropertyController";
-
+import  isAuth from "../middleware/isAuth";
 const router = Router();
 const propertyController = new PropertyController();
 
 // Standard CRUD routes
 router.get("/", propertyController.getAll.bind(propertyController));
 router.get("/:id", propertyController.getById.bind(propertyController));
-router.post("/", propertyController.create.bind(propertyController));
-router.put("/:id", propertyController.update.bind(propertyController));
-router.delete("/:id", propertyController.delete.bind(propertyController));
+router.post("/",isAuth, propertyController.create.bind(propertyController));
+router.put("/:id",isAuth, propertyController.update.bind(propertyController));
+router.delete("/:id",isAuth, propertyController.delete.bind(propertyController));
 
 // Property-specific routes
 router.get("/available", propertyController.getAvailableProperties.bind(propertyController));
