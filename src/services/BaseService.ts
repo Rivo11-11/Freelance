@@ -1,4 +1,6 @@
 import { Model, Document } from 'mongoose';
+import { GetAllResponse } from '../types/getAll';
+import { GetAllRequest } from '../types/getAll';
 
 export default abstract class BaseService<T extends Document> {
   protected model: Model<T>;
@@ -34,5 +36,27 @@ export default abstract class BaseService<T extends Document> {
 
   async findMany(filter: any): Promise<T[]> {
     return this.model.find(filter);
+  }
+
+  async getPaginated(
+    options: GetAllRequest = {}
+  ): Promise<GetAllResponse<T>> {
+    const { page, limit, sort, filter } = options;
+    const skip = (page! - 1) * limit!;
+    const [data, totalItems] = await Promise.all([
+      this.model.find(filter).sort(sort).skip(skip).limit(limit!),
+      this.model.countDocuments(filter)
+    ]);
+
+    const totalPages = Math.ceil(totalItems / limit!);
+    return {
+      data,
+      totalItems,
+      totalPages,
+      currentPage: page!,
+      pageSize: limit!,
+      hasNextPage: page! < totalPages,
+      hasPrevPage: page! > 1
+    };
   }
 }

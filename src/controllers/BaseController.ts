@@ -53,4 +53,25 @@ export default abstract class BaseController<T extends Document> {
       
       return ResponseUtils.success(res, { message: 'Entity deleted successfully' });
   }
+
+  async getAllPaginated(req: Request, res: Response) {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const sort = req.query.sort || {};
+    const filter = req.query.filter || {};
+    console.log(filter);
+    console.log(sort)
+    const result = await this.service.getPaginated({ page, limit, sort, filter });
+    return ResponseUtils.success(res, {
+      data : result.data,
+      pagination: {
+        totalItems: result.totalItems,
+        totalPages: result.totalPages,
+        currentPage: result.currentPage,
+        pageSize: result.pageSize,
+        hasNextPage: result.hasNextPage,
+        hasPrevPage: result.hasPrevPage
+      }
+    });
+}
 } 

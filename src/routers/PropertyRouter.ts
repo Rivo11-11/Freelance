@@ -7,7 +7,7 @@ const router = Router();
 const propertyController = new PropertyController();
 
 // Standard CRUD routes
-router.get("/", propertyController.getAll.bind(propertyController));
+router.get("/", propertyController.getAllPaginated.bind(propertyController));
 router.get("/:id", propertyController.getById.bind(propertyController));
 router.post("/",isAuth, uploadMultipleMediaMiddleware([
     { name: 'ownershipContract' },

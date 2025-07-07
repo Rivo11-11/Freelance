@@ -7,7 +7,7 @@ const router = Router();
 const userController = new UserController();
 
 // Standard CRUD routes
-router.get("/", userController.getAll.bind(userController));
+router.get("/", userController.getAllPaginated.bind(userController));
 router.get("/:id", userController.getById.bind(userController));
 router.post("/", signupValidator, userController.create.bind(userController));
 router.put("/:id", userController.update.bind(userController));
