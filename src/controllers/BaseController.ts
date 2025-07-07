@@ -57,10 +57,8 @@ export default abstract class BaseController<T extends Document> {
   async getAllPaginated(req: Request, res: Response) {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
-    const sort = req.query.sort || {};
-    const filter = req.query.filter || {};
-    console.log(filter);
-    console.log(sort)
+    const sort = req.query.sort ? JSON.parse(req.query.sort as string) : {};
+    const filter = req.query.filter ? JSON.parse(req.query.filter as string) : {}; 
     const result = await this.service.getPaginated({ page, limit, sort, filter });
     return ResponseUtils.success(res, {
       data : result.data,
