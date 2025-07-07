@@ -16,3 +16,4 @@ dist/
 # Editor swap files
 *.swp
 *.swo
+.vercel
