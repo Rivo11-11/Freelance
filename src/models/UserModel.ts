@@ -4,6 +4,7 @@ import { uploadToCloudinary } from '../utils/cloudinaryUtils';
 export enum UserRole {
   VENDOR = 'vendor',  
   USER = 'user',
+  ADMIN = 'admin'
 }
 
 export interface IUser extends Document {
