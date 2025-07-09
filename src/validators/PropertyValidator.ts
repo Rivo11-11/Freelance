@@ -59,6 +59,5 @@ export const createPropertyValidator = [
         }
         return true;
     }),
-    body('vendor').notEmpty().withMessage('Vendor is required'),
     validateRequest
 ]

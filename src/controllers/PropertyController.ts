@@ -13,6 +13,10 @@ export class PropertyController extends BaseController<IProperty> {
     this.propertyService = propertyService;
   }
 
+  async create(req: Request, res: Response) {
+     req.body.vendorId = (req as any).user;
+     return super.create(req, res);
+  }
   async getAvailableProperties(req: Request, res: Response) {
       const properties = await this.propertyService.getAvailableProperties();
       return ResponseUtils.success(res, properties);

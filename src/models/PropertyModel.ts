@@ -19,7 +19,7 @@ export interface IProperty extends Document {
     ownershipContract: string;
     facilityLicense?: string;
     medias: string[];
-    vendor: string;
+    vendorId: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -86,7 +86,7 @@ const PropertySchema = new Schema({
         type: [String],
         required: false
     },
-    vendor: {
+    vendorId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
