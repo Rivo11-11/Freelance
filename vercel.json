@@ -15,9 +15,5 @@
       "src": "/(.*)",
       "dest": "src/app.ts"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production",
-    "PRODUCTION_SERVER_URL": "https://luby-rafiks-projects-827f7443.vercel.app"
-  }
+  ]
 } 
