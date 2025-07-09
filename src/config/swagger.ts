@@ -1,6 +1,14 @@
 // src/docs/swagger.ts
 import swaggerJSDoc from 'swagger-jsdoc';
 
+// Get the appropriate server URL based on environment
+const getServerUrl = () => {
+  if (process.env.NODE_ENV === 'production') {
+    return process.env.PRODUCTION_SERVER_URL || 'https://luby-rafiks-projects-827f7443.vercel.app';
+  }
+  return process.env.SERVER_URL || 'http://localhost:8000';
+};
+
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
@@ -10,8 +18,8 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'http://localhost:8000/api/v1',
-      description: 'Local development server',
+      url: `${getServerUrl()}/api/v1`,
+      description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Local development server',
     },
   ],
   components: {
@@ -160,3 +168,7 @@ const options = {
 };
 
 export const swaggerSpec = swaggerJSDoc(options);
+
+// Debug logging
+console.log('Swagger spec generated with server URL:', getServerUrl());
+console.log('Environment:', process.env.NODE_ENV);
