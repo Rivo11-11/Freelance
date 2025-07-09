@@ -7,6 +7,8 @@ import userRouter from "./routers/UserRouter";
 import authRouter from "./routers/AuthRouter";
 import { globalErrorHandler } from "./middleware/errorHandler";
 import propertyRouter from "./routers/PropertyRouter";
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
 import { RouteDebugger } from "./utils/routeDebugger";
 dotenv.config();
 
@@ -14,6 +16,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
+// swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Middleware
 app.use(express.json());
 app.use(morgan('dev'));
