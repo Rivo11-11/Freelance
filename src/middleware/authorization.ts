@@ -11,3 +11,12 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction) =
   }
   next();
 };
+
+export const isVendor = async (req: Request, res: Response, next: NextFunction) => {
+  const id = (req as any).user;
+  const user = await User.findById(id);
+  if (user?.role === UserRole.USER) {
+    return ResponseUtils.unauthorized(res, 'unauthorized access');
+  }
+  next();
+};
