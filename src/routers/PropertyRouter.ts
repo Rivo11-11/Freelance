@@ -3,19 +3,20 @@ import { PropertyController } from "../controllers/PropertyController";
 import  isAuth from "../middleware/isAuth";
 import { uploadMultipleMediaMiddleware } from "../middleware/uploadMiddleware";
 import { createPropertyValidator } from "../validators/PropertyValidator";
+import { isVendor } from "../middleware/authorization";
 const router = Router();
 const propertyController = new PropertyController();
 
 // Standard CRUD routes
 router.get("/", propertyController.getAllPaginated.bind(propertyController));
 router.get("/:id", propertyController.getById.bind(propertyController));
-router.post("/",isAuth, uploadMultipleMediaMiddleware([
+router.post("/",isAuth, isVendor, uploadMultipleMediaMiddleware([
     { name: 'ownershipContract' },
     { name: 'facilityLicense' },
     { name: 'medias', maxCount: 3 }
 ]), createPropertyValidator, propertyController.create.bind(propertyController));
-router.put("/:id",isAuth, propertyController.update.bind(propertyController));
-router.delete("/:id",isAuth, propertyController.delete.bind(propertyController));
+router.put("/:id",isAuth, isVendor, propertyController.update.bind(propertyController));
+router.delete("/:id",isAuth, isVendor, propertyController.delete.bind(propertyController));
 
 // Property-specific routes
 router.get("/available", propertyController.getAvailableProperties.bind(propertyController));
