@@ -14,6 +14,7 @@ const isAuth = (req: Request, res: Response, next: NextFunction) => {
     }
     const decoded = verifyToken(tokenString);
     (req as any).user = decoded.userId;
+    (req as any).role = decoded.role;
     next();
 }
 

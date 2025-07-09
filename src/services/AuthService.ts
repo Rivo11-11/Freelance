@@ -33,7 +33,7 @@ class AuthService {
    async signup(signupDTO: SignupDTO) {
       const password = await hashPassword(signupDTO.password);
       const user = await User.create({...signupDTO, password});
-      const { token, expiresIn } =  generateToken({ userId: user._id});
+      const { token, expiresIn } =  generateToken({ userId: user._id, role: user.role});
       return {
         token,
         expiresIn,
@@ -50,7 +50,7 @@ class AuthService {
        if(!isPasswordValid) {
         throw new CustomError('email or password is incorrect', 442);
        }
-       const { token, expiresIn } =  generateToken({ userId: user._id});
+       const { token, expiresIn } =  generateToken({ userId: user._id, role: user.role});
        return {
         token,
         expiresIn,
