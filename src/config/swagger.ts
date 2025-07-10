@@ -1,26 +1,30 @@
 // src/docs/swagger.ts
 import swaggerJSDoc from 'swagger-jsdoc';
 
-// Get the appropriate server URL based on environment
-const getServerUrl = () => {
-  if (process.env.ENVIRONMENT === 'production') {
-    return process.env.PRODUCTION_SERVER_URL || 'https://luby-rafiks-projects-827f7443.vercel.app';
-  }
-  return process.env.SERVER_URL || 'http://localhost:8000';
-};
-
 const swaggerDefinition = {
-  openapi: '3.0.0',
+  openapi: '3.1.0',
   info: {
     title: 'Luby Property Management API',
     version: '1.0.0',
     description: 'A comprehensive API for property management system with user authentication, property listings, and vendor management.',
+    contact: {
+      name: 'API Support',
+      email: 'support@luby.com'
+    },
+    license: {
+      name: 'MIT',
+      url: 'https://opensource.org/licenses/MIT'
+    }
   },
   servers: [
     {
-      url: `${getServerUrl()}/api/v1`,
-      description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Local development server',
+      url: 'https://luby-rafiks-projects-827f7443.vercel.app/api/v1',
+      description: 'Production server'
     },
+    {
+      url: 'http://localhost:8000/api/v1',
+      description: 'Local development server'
+    }
   ],
   components: {
     securitySchemes: {
@@ -163,8 +167,8 @@ const swaggerDefinition = {
 };
 
 const options = {
-  swaggerDefinition,
-  apis: ['src/routers/**/*.ts', 'src/controllers/**/*.ts'], // Updated to include router files
+  definition: swaggerDefinition,
+  apis: ['src/routers/**/*.ts', 'src/controllers/**/*.ts'],
 };
 
 export const swaggerSpec = swaggerJSDoc(options);

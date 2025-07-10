@@ -110,6 +110,7 @@ router.get("/", userController.getAllPaginated.bind(userController));
  *                     firstName:
  *                       type: string
  *                     lastName:
+ *                       type: string
  *                     role:
  *                       type: string
  *                     phone:

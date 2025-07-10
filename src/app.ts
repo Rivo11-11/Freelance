@@ -18,10 +18,16 @@ const MONGO_URI = process.env.MONGO_URI;
 
 // swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Middleware
 app.use(express.json());
 app.use(morgan('dev'));
 
+// swagger
+app.get('/swagger.json', (_, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec)
+});
 // Routes
 app.use("/api/v1/users", userRouter); 
 app.use("/api/v1/properties", propertyRouter);
