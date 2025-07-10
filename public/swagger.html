@@ -1,0 +1,1397 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luby Property Management API</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui.css" />
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        body {
+            margin: 0;
+            background: #fafafa;
+        }
+        .swagger-ui .topbar {
+            background-color: #2c3e50;
+        }
+        .swagger-ui .topbar .download-url-wrapper .select-label {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js"></script>
+    <script>
+        window.onload = function() {
+            const spec = {
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Luby Property Management API",
+    "version": "1.0.0",
+    "description": "A comprehensive API for property management system with user authentication, property listings, and vendor management.",
+    "contact": {
+      "name": "API Support",
+      "email": "support@luby.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://luby-rafiks-projects-827f7443.vercel.app/api/v1",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:8000/api/v1",
+      "description": "Local development server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Enter your JWT token in the format: Bearer <token>"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User unique identifier"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User email address"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "User first name"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User last name"
+          },
+          "phone": {
+            "type": "string",
+            "description": "User phone number"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "admin",
+              "vendor"
+            ],
+            "description": "User role in the system"
+          },
+          "profilePicture": {
+            "type": "string",
+            "description": "URL to user profile picture"
+          }
+        }
+      },
+      "Property": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Property unique identifier"
+          },
+          "title": {
+            "type": "string",
+            "description": "Property title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Property description"
+          },
+          "price": {
+            "type": "number",
+            "description": "Property price"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "apartment",
+              "house",
+              "villa",
+              "office",
+              "land"
+            ],
+            "description": "Property type"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "sold",
+              "rented"
+            ],
+            "description": "Property status"
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "ID of the vendor who owns this property"
+          },
+          "medias": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of media URLs for the property"
+          },
+          "ownershipContract": {
+            "type": "string",
+            "description": "URL to ownership contract document"
+          },
+          "facilityLicense": {
+            "type": "string",
+            "description": "URL to facility license document"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User authentication and authorization endpoints"
+    },
+    {
+      "name": "Users",
+      "description": "User management operations"
+    },
+    {
+      "name": "Properties",
+      "description": "Property management operations"
+    }
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "summary": "Complete user signup",
+        "description": "Completes the signup process with user details and profile picture",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password",
+                  "firstName",
+                  "lastName",
+                  "phone"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 6,
+                    "description": "User's password"
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "description": "User's first name"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "User's last name"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "description": "User's phone number"
+                  },
+                  "profilePicture": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "User's profile picture"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "firstName": {
+                              "type": "string"
+                            },
+                            "lastName": {
+                              "type": "string"
+                            },
+                            "role": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "token": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "409": {
+            "description": "User already exists"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "summary": "User signin",
+        "description": "Authenticates user with email and password",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "User's password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signin successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "firstName": {
+                              "type": "string"
+                            },
+                            "lastName": {
+                              "type": "string"
+                            },
+                            "role": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "token": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/properties": {
+      "get": {
+        "summary": "Get all properties with pagination",
+        "description": "Retrieves a paginated list of all properties in the system",
+        "tags": [
+          "Properties"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Properties retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "properties": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "price": {
+                                "type": "number"
+                              },
+                              "type": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string"
+                              },
+                              "vendorId": {
+                                "type": "string"
+                              },
+                              "medias": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "pagination": {
+                          "type": "object",
+                          "properties": {
+                            "page": {
+                              "type": "integer"
+                            },
+                            "limit": {
+                              "type": "integer"
+                            },
+                            "total": {
+                              "type": "integer"
+                            },
+                            "pages": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new property",
+        "description": "Creates a new property (Vendor only)",
+        "tags": [
+          "Properties"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "description",
+                  "price",
+                  "type"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Property title"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Property description"
+                  },
+                  "price": {
+                    "type": "number",
+                    "description": "Property price"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "apartment",
+                      "house",
+                      "villa",
+                      "office",
+                      "land"
+                    ],
+                    "description": "Property type"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "available",
+                      "sold",
+                      "rented"
+                    ],
+                    "default": "available",
+                    "description": "Property status"
+                  },
+                  "ownershipContract": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Ownership contract document"
+                  },
+                  "facilityLicense": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Facility license document"
+                  },
+                  "medias": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "Property media files (max 3)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Property created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "price": {
+                          "type": "number"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "vendorId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Vendor access required"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/properties/{id}": {
+      "get": {
+        "summary": "Get property by ID",
+        "description": "Retrieves a specific property by its ID",
+        "tags": [
+          "Properties"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Property ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Property retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "price": {
+                          "type": "number"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "vendorId": {
+                          "type": "string"
+                        },
+                        "medias": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "ownershipContract": {
+                          "type": "string"
+                        },
+                        "facilityLicense": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Property not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update property",
+        "description": "Updates an existing property's information (Vendor only)",
+        "tags": [
+          "Properties"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Property ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Property title"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Property description"
+                  },
+                  "price": {
+                    "type": "number",
+                    "description": "Property price"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "apartment",
+                      "house",
+                      "villa",
+                      "office",
+                      "land"
+                    ],
+                    "description": "Property type"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "available",
+                      "sold",
+                      "rented"
+                    ],
+                    "description": "Property status"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Property updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "price": {
+                          "type": "number"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Vendor access required"
+          },
+          "404": {
+            "description": "Property not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete property",
+        "description": "Deletes a property from the system (Vendor only)",
+        "tags": [
+          "Properties"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Property ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Property deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Vendor access required"
+          },
+          "404": {
+            "description": "Property not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Get all users with pagination",
+        "description": "Retrieves a paginated list of all users in the system",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Users retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "users": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "email": {
+                                "type": "string"
+                              },
+                              "firstName": {
+                                "type": "string"
+                              },
+                              "lastName": {
+                                "type": "string"
+                              },
+                              "role": {
+                                "type": "string"
+                              },
+                              "phone": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "pagination": {
+                          "type": "object",
+                          "properties": {
+                            "page": {
+                              "type": "integer"
+                            },
+                            "limit": {
+                              "type": "integer"
+                            },
+                            "total": {
+                              "type": "integer"
+                            },
+                            "pages": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new user",
+        "description": "Creates a new user (Admin only)",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password",
+                  "firstName",
+                  "lastName",
+                  "phone"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 6,
+                    "description": "User's password"
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "description": "User's first name"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "User's last name"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "description": "User's phone number"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "user",
+                      "admin",
+                      "vendor"
+                    ],
+                    "default": "user",
+                    "description": "User's role"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "409": {
+            "description": "User already exists"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Get user by ID",
+        "description": "Retrieves a specific user by their ID",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string"
+                        },
+                        "phone": {
+                          "type": "string"
+                        },
+                        "profilePicture": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update user",
+        "description": "Updates an existing user's information (Admin only)",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "description": "User's first name"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "User's last name"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "description": "User's phone number"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "user",
+                      "admin",
+                      "vendor"
+                    ],
+                    "description": "User's role"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete user",
+        "description": "Deletes a user from the system (Admin only)",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    }
+  }
+};
+            
+            const ui = SwaggerUIBundle({
+                spec: spec,
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                validatorUrl: null,
+                docExpansion: 'list',
+                filter: true,
+                showExtensions: true,
+                showCommonExtensions: true
+            });
+        };
+    </script>
+</body>
+</html>
