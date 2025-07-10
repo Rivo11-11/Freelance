@@ -168,7 +168,7 @@ const swaggerDefinition = {
 
 const options = {
   definition: swaggerDefinition,
-  apis: ['src/routers/**/*.ts', 'src/controllers/**/*.ts'],
+  apis: ['src/docs/**/*.ts'], // Updated to read from docs directory
 };
 
 export const swaggerSpec = swaggerJSDoc(options);
