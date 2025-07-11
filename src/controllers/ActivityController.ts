@@ -1,0 +1,19 @@
+import { Request, Response } from "express";
+import BaseController from "./BaseController";
+import { IActivity } from "../models/ActivityModel";
+import ActivityService from "../services/ActivityService";
+
+export class ActivityController extends BaseController<IActivity> {
+  private activityService: ActivityService;
+  
+  constructor() {
+    const activityService = new ActivityService();
+    super(activityService);
+    this.activityService = activityService;
+  }
+
+  async create(req: Request, res: Response) {
+     req.body.vendorId = (req as any).user;
+     return super.create(req, res);
+  }
+}
