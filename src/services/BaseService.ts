@@ -23,7 +23,7 @@ export default abstract class BaseService<T extends Document> {
   }
 
   async update(id: string, data: Partial<T>): Promise<T | null> {
-    return this.model.findByIdAndUpdate(id, data, { new: true });
+    return this.model.findByIdAndUpdate(id, data, { new: true , runValidators: true });
   }
 
   async delete(id: string): Promise<T | null> {

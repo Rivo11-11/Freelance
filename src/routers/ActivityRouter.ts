@@ -3,7 +3,7 @@ import { ActivityController } from "../controllers/ActivityController";
 import  isAuth from "../middleware/isAuth";
 import { uploadMultipleMediaMiddleware } from "../middleware/uploadMiddleware";
 import { createActivityValidator } from "../validators/ActivityValidator";
-import { isVendor } from "../middleware/authorization";
+import { isAdmin, isVendor } from "../middleware/authorization";
 
 const router = Router();
 const activityController = new ActivityController();
@@ -15,5 +15,8 @@ router.post("/",isAuth, isVendor, uploadMultipleMediaMiddleware([
 ]), createActivityValidator, activityController.create.bind(activityController));
 router.put("/:id",isAuth, isVendor, activityController.update.bind(activityController));
 router.delete("/:id",isAuth, isVendor, activityController.delete.bind(activityController));
+
+// custom routes
+router.get("/:id/verify", isAuth, isAdmin, activityController.verifyActivity.bind(activityController));
 
 export default router; 

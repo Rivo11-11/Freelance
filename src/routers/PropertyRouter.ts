@@ -3,7 +3,7 @@ import { PropertyController } from "../controllers/PropertyController";
 import  isAuth from "../middleware/isAuth";
 import { uploadMultipleMediaMiddleware } from "../middleware/uploadMiddleware";
 import { createPropertyValidator } from "../validators/PropertyValidator";
-import { isVendor } from "../middleware/authorization";
+import { isAdmin, isVendor } from "../middleware/authorization";
 
 const router = Router();
 const propertyController = new PropertyController();
@@ -17,10 +17,8 @@ router.post("/",isAuth, isVendor, uploadMultipleMediaMiddleware([
 ]), createPropertyValidator, propertyController.create.bind(propertyController));
 router.put("/:id",isAuth, isVendor, propertyController.update.bind(propertyController));
 router.delete("/:id",isAuth, isVendor, propertyController.delete.bind(propertyController));
-router.get("/available", propertyController.getAvailableProperties.bind(propertyController));
-router.get("/type/:type", propertyController.getPropertiesByType.bind(propertyController));
-router.get("/vendor/:vendorId", propertyController.getPropertiesByVendor.bind(propertyController));
-router.get("/search", propertyController.searchProperties.bind(propertyController));
-router.get("/price-range", propertyController.getPropertiesByPriceRange.bind(propertyController));
+
+// custom routes
+router.get("/:id/verify", isAuth, isAdmin, propertyController.verifyProperty.bind(propertyController));
 
 export default router; 

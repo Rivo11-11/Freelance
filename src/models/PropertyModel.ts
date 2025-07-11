@@ -20,6 +20,7 @@ export interface IProperty extends Document {
     facilityLicense?: string;
     medias: string[];
     vendorId: string;
+    verified: VerificationStatus;
     createdAt: Date;
     updatedAt: Date;
 }

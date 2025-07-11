@@ -13,6 +13,7 @@ export interface IActivity extends Document {
     time: string;
     activityTime: string;
     vendorId: string;
+    verified: VerificationStatus;
     createdAt: Date;
     updatedAt: Date;
 }
