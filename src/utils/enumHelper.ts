@@ -15,3 +15,9 @@ export enum PropertyType {
     YACHT = 'yacht',
     CRUISE = 'cruise',
 }
+
+export enum VerificationStatus {
+    PENDING = 'pending',
+    APPROVED = 'approved',
+    REJECTED = 'rejected',
+}

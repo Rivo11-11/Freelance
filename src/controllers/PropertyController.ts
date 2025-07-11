@@ -3,7 +3,8 @@ import PropertyService from "../services/PropertyService";
 import BaseController from "./BaseController";
 import ResponseUtils from "../utils/responseUtils";
 import { IProperty } from "../models/PropertyModel";
-
+import { UserRole } from "../models/UserModel";
+import { VerificationStatus } from "../utils/enumHelper";
 export class PropertyController extends BaseController<IProperty> {
   private propertyService: PropertyService;
   
@@ -15,6 +16,9 @@ export class PropertyController extends BaseController<IProperty> {
 
   async create(req: Request, res: Response) {
      req.body.vendorId = (req as any).user;
+     if ((req as any).role === UserRole.ADMIN) {
+        req.body.verified = VerificationStatus.APPROVED;
+     }
      return super.create(req, res);
   }
   async getAvailableProperties(req: Request, res: Response) {

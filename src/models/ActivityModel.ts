@@ -1,5 +1,6 @@
-import mongoose, { Schema, model, Document } from "mongoose"
+import mongoose, { Schema , Document } from "mongoose"
 import { uploadMultipleToCloudinary } from "../utils/cloudinaryUtils";
+import { VerificationStatus } from "../utils/enumHelper";
 
 export interface IActivity extends Document {
     name: string;
@@ -57,6 +58,11 @@ const ActivitySchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    verified: {
+        type: String,
+        default: VerificationStatus.PENDING,
+        enum: Object.values(VerificationStatus)
     },
    
     

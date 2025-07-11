@@ -1,5 +1,5 @@
-import mongoose, { Schema, Document, model } from "mongoose";
-import { PropertyType } from "../utils/enumHelper";
+import mongoose, { Schema, Document } from "mongoose";
+import { PropertyType, VerificationStatus } from "../utils/enumHelper";
 import { uploadMultipleToCloudinary, uploadToCloudinary } from "../utils/cloudinaryUtils";
 
 
@@ -90,6 +90,11 @@ const PropertySchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    verified: {
+        type: String,
+        default: VerificationStatus.PENDING,
+        enum: Object.values(VerificationStatus)
     },
    
     
