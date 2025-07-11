@@ -7,6 +7,7 @@ import userRouter from "./routers/UserRouter";
 import authRouter from "./routers/AuthRouter";
 import { globalErrorHandler } from "./middleware/errorHandler";
 import propertyRouter from "./routers/PropertyRouter";
+import activityRouter from "./routers/ActivityRouter";
 import { swaggerSpec } from './config/swagger';
 import { RouteDebugger } from "./utils/routeDebugger";
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(morgan('dev'));
 // Routes
 app.use("/api/v1/users", userRouter); 
 app.use("/api/v1/properties", propertyRouter);
+app.use("/api/v1/activities", activityRouter);
 app.use("/api/v1/auth", authRouter);
 
 app.use(globalErrorHandler);
