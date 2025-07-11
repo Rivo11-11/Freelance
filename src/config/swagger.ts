@@ -6,7 +6,7 @@ const swaggerDefinition = {
   info: {
     title: 'Luby Property Management API',
     version: '1.0.0',
-    description: 'A comprehensive API for property management system with user authentication, property listings, and vendor management.',
+    description: 'A comprehensive API for Luby Project',
     contact: {
       name: 'API Support',
       email: 'support@luby.com'
@@ -121,6 +121,72 @@ const swaggerDefinition = {
           }
         }
       },
+      Activity: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            description: 'Activity unique identifier'
+          },
+          name: {
+            type: 'string',
+            description: 'Activity name'
+          },
+          address: {
+            type: 'string',
+            description: 'Activity address'
+          },
+          details: {
+            type: 'string',
+            description: 'Activity details'
+          },
+          tags: {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            description: 'Activity tags'
+          },
+          price: {
+            type: 'number',
+            description: 'Activity price'
+          },
+          date: {
+            type: 'string',
+            format: 'date',
+            description: 'Activity date'
+          },
+          medias: {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            description: 'Array of media URLs for the activity'
+          },
+          time: {
+            type: 'string',
+            description: 'Activity time'
+          },
+          activityTime: {
+            type: 'string',
+            description: 'Activity duration'
+          },
+          vendorId: {
+            type: 'string',
+            description: 'ID of the vendor who created this activity'
+          },
+          createdAt: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Activity creation timestamp'
+          },
+          updatedAt: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Activity last update timestamp'
+          }
+        }
+      },
       Error: {
         type: 'object',
         properties: {
@@ -162,6 +228,10 @@ const swaggerDefinition = {
     {
       name: 'Properties',
       description: 'Property management operations'
+    },
+    {
+      name: 'Activities',
+      description: 'Activity management operations'
     }
   ]
 };
