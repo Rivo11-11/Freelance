@@ -31,4 +31,4 @@ mongoose.connect(process.env.MONGO_URI!)
   .then(() => console.log('✅ MongoDB (staging) connected'))
   .catch(console.error);
 
-export default app;
+module.exports = app;
