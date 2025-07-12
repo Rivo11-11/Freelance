@@ -1,45 +1,34 @@
+// src/app.ts
 import 'express-async-errors';
-import express from "express";
-import dotenv from "dotenv";
-import morgan from "morgan";
-import mongoose from "mongoose";
-import userRouter from "./routers/UserRouter";
-import authRouter from "./routers/AuthRouter";
-import { globalErrorHandler } from "./middleware/errorHandler";
-import propertyRouter from "./routers/PropertyRouter";
-import activityRouter from "./routers/ActivityRouter";
-import { swaggerSpec } from './config/swagger';
-import { RouteDebugger } from "./utils/routeDebugger";
+import express from 'express';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+
+import userRouter from './routers/UserRouter';
+import authRouter from './routers/AuthRouter';
+import propertyRouter from './routers/PropertyRouter';
+import activityRouter from './routers/ActivityRouter';
+import { globalErrorHandler } from './middleware/errorHandler';
+
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
-
-// Middleware
 app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
+app.get('/', (req, res) => res.send('✅ Express app running (staging)'));
 
-// Routes
-app.use("/api/v1/users", userRouter); 
-app.use("/api/v1/properties", propertyRouter);
-app.use("/api/v1/activities", activityRouter);
-app.use("/api/v1/auth", authRouter);
-
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/properties', propertyRouter);
+app.use('/api/v1/activities', activityRouter);
 app.use(globalErrorHandler);
 
-mongoose.connect(MONGO_URI!)
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-      
-      // Debug: Log all registered routes
-      // RouteDebugger.logAllRoutes(app);
-    });
-    console.log("✅ Connected to MongoDB");
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
-  });
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI!)
+  .then(() => console.log('✅ MongoDB (staging) connected'))
+  .catch(console.error);
+
+export default app;
